@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>My Maze</title>
+  </head>
+  <body>
+    <p><strong>Maze solver</strong></p>
+    <p style="font-size: small">
+      *solves the maze generated randomly by using Policy Gradient
+    </p>
+    <canvas> Canvas not supported ... </canvas>
+
+    <form id="params-form" action="#">
+      <label>row: </label>
+      <input type="text" id="row-size" size="2" value="7" />
+      <label>col: </label>
+      <input type="text" id="col-size" size="2" value="7" />
+      <p style="font-size: small">{row, col | [5,11], odd}</p>
+      <p>
+        <input type="button" id="btn" onclick="run()" value="RUN" />
+      </p>
+    </form>
+
+    <hr />
+    <div>
+      <p><strong>RESULT:</strong></p>
+      <p id="result"></p>
+    </div>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>
