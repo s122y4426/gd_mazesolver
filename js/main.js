@@ -203,7 +203,7 @@
   class MazeRenderer {
     constructor(canvas) {
       this.ctx = canvas.getContext("2d");
-      this.WALL_SIZE = 10;
+      this.WALL_SIZE = 30;
     }
 
     // Pathを迷路に描画
@@ -360,6 +360,7 @@
   //  MAIN
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
+  const canvas = document.querySelector("canvas");
   const maze = new Maze(7, 7, new MezeLearner(), new MazeRenderer(canvas));
   //maze.learn();
   maze.render();
