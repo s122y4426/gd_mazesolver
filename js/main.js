@@ -401,10 +401,23 @@
     document.getElementById("result").innerHTML = result;
 
     let progress = "";
+    let steps = [];
     for (let p of maze.s_a_history) {
       console.log(p);
       progress = progress + "→" + p[0];
+      steps.push(p[0]);
     }
     document.getElementById("progress").innerHTML = progress;
+
+    /** 配列内で値が重複してないか調べる **/
+    function existsSameValue(a) {
+      var s = new Set(a);
+      return s.size === a.length;
+    }
+    if (existsSameValue(steps)) {
+      document.getElementById("message").innerHTML = "SUCCESS!!!";
+    } else {
+      document.getElementById("message").innerHTML = "FAILED";
+    }
   };
 })();
