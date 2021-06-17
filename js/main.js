@@ -380,5 +380,12 @@
     console.log(maze);
     const result = maze.s_a_history.length + " steps";
     document.getElementById("result").innerHTML = result;
+
+    let progress = "";
+    for (let p of maze.s_a_history) {
+      console.log(p);
+      progress = progress + "→" + p[0];
+    }
+    document.getElementById("progress").innerHTML = progress;
   };
 })();
