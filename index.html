@@ -13,12 +13,30 @@
 
     <form id="params-form" action="#">
       <label>row: </label>
-      <input type="text" id="row-size" size="2" value="7" />
+      <input
+        type="text"
+        id="row-size"
+        size="2"
+        value="7"
+        style="padding: 10px 10px"
+      />
       <label>col: </label>
-      <input type="text" id="col-size" size="2" value="7" />
+      <input
+        type="text"
+        id="col-size"
+        size="2"
+        value="7"
+        style="padding: 10px 10px"
+      />
       <p style="font-size: small">{row, col | [5,11], odd}</p>
       <p>
-        <input type="button" id="btn" onclick="run()" value="RUN" />
+        <input
+          type="button"
+          id="btn"
+          style="padding: 10px 30px"
+          　onclick="run()"
+          value="RUN"
+        />
       </p>
     </form>
 
