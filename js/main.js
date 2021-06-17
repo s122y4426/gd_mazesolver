@@ -158,8 +158,8 @@
     }
 
     //エピソード回数分、学習
-    run(theta, row, col) {
-      const episode = 5000;
+    run(theta, row, col, episodes) {
+      const episode = episodes;
       let s_a_history = [];
       let pi_new = [];
       let pi_delta = 0;
@@ -265,7 +265,7 @@
   //  MAZE
   ///////////////////////////////////////////////////////////////////////////////////////////////
   class Maze {
-    constructor(row, col, learner, renderer) {
+    constructor(row, col, episodes, learner, renderer) {
       if (row < 5 || col < 5 || row % 2 === 0 || col % 2 === 0) {
         alert("Size not valid!");
         return;
@@ -275,6 +275,7 @@
       this.renderer = renderer; // 描画用クラス
       this.row = Number(row);
       this.col = Number(col);
+      this.episodes = Number(episodes);
 
       //this.data = this.getData();
       [this.data, this.theta] = this.getData();
@@ -365,7 +366,12 @@
 
     // MazeLearner内のlearnを呼び出す
     learn() {
-      this.s_a_history = this.learner.run(this.theta, this.row, this.col);
+      this.s_a_history = this.learner.run(
+        this.theta,
+        this.row,
+        this.col,
+        this.episodes
+      );
     }
 
     // MazeRenderer内のrenderを呼び出す
@@ -379,17 +385,25 @@
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
   const canvas = document.querySelector("canvas");
-  const maze = new Maze(7, 7, new MezeLearner(), new MazeRenderer(canvas));
+  const maze = new Maze(
+    7,
+    7,
+    5000,
+    new MezeLearner(),
+    new MazeRenderer(canvas)
+  );
   //maze.learn();
   maze.render();
 
   document.getElementById("btn").onclick = function () {
     const ROW = document.getElementById("row-size").value;
     const COL = document.getElementById("col-size").value;
+    const EPISODES = document.getElementById("episodes").value;
     // Validation
     const maze = new Maze(
       ROW,
       COL,
+      EPISODES,
       new MezeLearner(),
       new MazeRenderer(canvas)
     );
