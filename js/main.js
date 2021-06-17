@@ -209,7 +209,7 @@
     // Pathを迷路に描画
     render_path(s_a_history, _col) {
       this.ctx.fillStyle = "green";
-      console.log(s_a_history);
+      this.ctx.globalAlpha = 0.4;
       for (let s_a of s_a_history) {
         let y = Math.floor(s_a[0] / (_col - 2)); //縦方向y
         let x = s_a[0] - y * (_col - 2); //横方向x
@@ -224,11 +224,14 @@
 
     // 迷路の描画
     render(data, s_a_history, _col) {
+      console.log(data);
       canvas.height = data.length * this.WALL_SIZE;
       canvas.width = data[0].length * this.WALL_SIZE;
       for (let row = 0; row < data.length; row++) {
         for (let col = 0; col < data[0].length; col++) {
+          // 壁の描画
           if (data[row][col] === 1) {
+            this.ctx.fillStyle = "black";
             this.ctx.fillRect(
               col * this.WALL_SIZE,
               row * this.WALL_SIZE,
@@ -236,6 +239,21 @@
               this.WALL_SIZE
             );
           }
+        }
+      }
+      // Step番号付与
+      for (let row = 0; row < data.length - 2; row++) {
+        for (let col = 0; col < data[0].length - 2; col++) {
+          console.log(row, col);
+          this.ctx.fillStyle = "red";
+          this.ctx.textAlign = "center";
+          this.ctx.textBaseline = "middle";
+          this.ctx.globalCompositeOperation = "lighter";
+          this.ctx.fillText(
+            row * (data[0].length - 2) + col,
+            (col + 1) * this.WALL_SIZE + this.WALL_SIZE / 2,
+            (row + 1) * this.WALL_SIZE + this.WALL_SIZE / 2
+          );
         }
       }
       // アニメーションの描画
