@@ -266,7 +266,14 @@
   ///////////////////////////////////////////////////////////////////////////////////////////////
   class Maze {
     constructor(row, col, episodes, learner, renderer) {
-      if (row < 5 || col < 5 || row % 2 === 0 || col % 2 === 0) {
+      if (
+        row < 5 ||
+        col < 5 ||
+        row > 11 ||
+        col > 11 ||
+        row % 2 === 0 ||
+        col % 2 === 0
+      ) {
         alert("Size not valid!");
         return;
       }
