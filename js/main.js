@@ -584,13 +584,8 @@
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
   const canvas = document.querySelector("canvas");
-  const maze = new Maze(
-    7,
-    7,
-    5000,
-    new MezeLearner(),
-    new MazeRenderer(canvas)
-  );
+  let maze;
+  maze = new Maze(7, 7, 5000, new MezeLearner(), new MazeRenderer(canvas));
   //maze.learn();
   maze.render();
 
@@ -598,16 +593,32 @@
   document.getElementById("btn").onclick = function () {
     const ROW = document.getElementById("row-size").value;
     const COL = document.getElementById("col-size").value;
+    const ALGO = document.getElementById("algorithm").value;
     const EPISODES = document.getElementById("episodes").value;
+
     // Validation
-    const maze = new Maze(
-      ROW,
-      COL,
-      EPISODES,
-      //new MezeLearner(),
-      new Sarsa(),
-      new MazeRenderer(canvas)
-    );
+    console.log(ALGO);
+    switch (ALGO) {
+      case "gd":
+        maze = new Maze(
+          ROW,
+          COL,
+          EPISODES,
+          new MezeLearner(),
+          new MazeRenderer(canvas)
+        );
+        break;
+      case "sarsa":
+        maze = new Maze(
+          ROW,
+          COL,
+          EPISODES,
+          new Sarsa(),
+          new MazeRenderer(canvas)
+        );
+        break;
+    }
+
     maze.learn();
     maze.render();
 
