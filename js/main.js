@@ -200,7 +200,6 @@
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //  MezeLearner (SARSA)
   ///////////////////////////////////////////////////////////////////////////////////////////////
-
   class Sarsa {
     constructor() {}
 
@@ -239,7 +238,6 @@
 
     //アクションに応じて次の行動を選択
     get_s_next(s, a, col) {
-      col = 5;
       switch (a) {
         case 0:
           return s - (col - 2);
@@ -256,7 +254,9 @@
     //参考：https://www.namakedame.work/js-randomized-algorithm/
     get_random_a(pi, s) {
       console.log("random selected");
+      console.log("pi: ", pi);
       const totalWeight = pi[s].reduce((a, v) => a + v);
+      console.log(" totalWeight:", totalWeight);
       let searchPosition = 0.0;
       const pickedAction = Math.random() * totalWeight;
 
@@ -270,13 +270,13 @@
 
     // 配列内の最大値を返す
     return_max(Q, s) {
-      console.log("maxQ selected");
       return Q[s].reduce((a, b) => (a > b ? a : b));
     }
 
     // 配列内の最大値を検索し、そのインデックスを返す
     return_max_index(Q, s) {
       console.log("maxQ selected");
+      console.log(s, Q);
       let max = Q[s].reduce((a, b) => (a > b ? a : b));
       return Q[s].indexOf(max);
     }
@@ -284,8 +284,8 @@
     // ε-greedy法
     get_a(s, Q, epsilon, pi) {
       return Math.random() < epsilon
-        ? get_random_a(pi, s)
-        : return_max_index(Q, s);
+        ? this.get_random_a(pi, s)
+        : this.return_max_index(Q, s);
     }
 
     // Q値の更新
@@ -298,20 +298,29 @@
       s_next === 8
         ? (Q[s][a] = Q[s][a] + eta * (r - Q[s][a]))
         : (Q[s][a] =
-            Q[s][a] + eta * (r + gamma * return_max(Q, s_next)) - Q[s][a]);
+            Q[s][a] + eta * (r + gamma * this.return_max(Q, s_next)) - Q[s][a]);
       return Q;
     }
 
     // 1エピソードの実行
-    play(Q, epsilon, pi) {
+    play(Q, epsilon, pi, row, col) {
       let s = 0;
       let r = 0;
-      let a_next = get_a(s, Q, epsilon, pi);
+      let a;
+      let a_next = this.get_a(s, Q, epsilon, pi);
+      let s_next;
       const s_a_history = [[0, ""]];
+      console.log("play!!!!!!!!!!!!!!!!!!!!!!!");
+      console.log(
+        "###########################################################################################"
+      );
       while (true) {
         a = a_next;
         // 行動から次の状態を取得
-        s_next = get_s_next(s, a);
+
+        console.log("s:", s, "a:", a);
+        s_next = this.get_s_next(s, a, col);
+        console.log("s_next", s_next);
 
         //履歴の更新
         s_a_history[s_a_history.length - 1][1] = a;
@@ -323,41 +332,50 @@
           a_next = "";
         } else {
           r = 0;
-          a_next = get_a(s_next, Q, epsilon, pi);
+          console.log("☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆");
+          console.log("s_next", s_next);
+          a_next = this.get_a(s_next, Q, epsilon, pi);
+          console.log("a_next", a_next);
+          console.log("☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆");
         }
         // Q値更新
-        Q = q_learning(s, a, r, s_next, a_next, Q);
+        Q = this.q_learning(s, a, r, s_next, a_next, Q);
         console.log(Q);
 
         // 修了判定
-        if (s_next === 8) {
+        let goal_pos = (row - 2) * (col - 2) - 1;
+        if (s_next === goal_pos) {
           break;
         } else {
           s = s_next;
         }
+        console.log(s_a_history);
+        console.log("----------------");
       }
       return [s_a_history, Q];
     }
 
-    run() {
+    run(theta, row, col, episodes) {
       // MAIN処理開始
       let epsilon = 0.5;
-      const episode = 10;
-      let Q = get_Q(theta);
-      let pi = get_pi(theta);
+      const episode = episodes;
+      let Q = this.get_Q(theta);
+      let pi = this.get_pi(theta);
+      let s_a_history;
 
       for (let i = 0; i < episode; i++) {
         // ε-greedyの値を少しずつ小さく
         epsilon = epsilon / 2;
 
         // 1エピソード実行して履歴と行動価値観数を取得
-        [s_a_history, Q] = play(Q, epsilon, pi);
+        [s_a_history, Q] = this.play(Q, epsilon, pi, row, col, episodes);
         //console.table(Q);
 
         // 結果
         console.log(i, s_a_history);
         console.log("====================================================");
       }
+      return s_a_history;
     }
   }
 
@@ -408,7 +426,6 @@
       // Step番号付与
       for (let row = 0; row < data.length - 2; row++) {
         for (let col = 0; col < data[0].length - 2; col++) {
-          console.log(row, col);
           this.ctx.fillStyle = "red";
           this.ctx.textAlign = "center";
           this.ctx.textBaseline = "middle";
@@ -536,6 +553,16 @@
     }
 
     // MazeLearner内のlearnを呼び出す
+    // learn() {
+    //   this.s_a_history = this.learner.run(
+    //     this.theta,
+    //     this.row,
+    //     this.col,
+    //     this.episodes
+    //   );
+    // }
+
+    // Sarsa内のlearnを呼び出す
     learn() {
       this.s_a_history = this.learner.run(
         this.theta,
@@ -550,25 +577,6 @@
       this.renderer.render(this.data, this.s_a_history, this.col);
     }
   }
-
-  ///////////////////////////////////////////////////////////////////////////////////////////////
-  //  Q-learning
-  ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  let test_theta = [
-    [0, 1, 1, 0], // 0
-    [0, 1, 1, 1], // 1
-    [0, 0, 0, 1], // 2
-    [1, 0, 1, 0], // 3
-    [1, 1, 0, 0], // 4
-    [0, 0, 1, 1], // 5
-    [1, 1, 0, 0], // 6
-    [0, 0, 0, 1],
-  ]; // 7
-
-  // Qテーブルの準備
-
-  // Q値の更新
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //  MAIN
@@ -595,7 +603,8 @@
       ROW,
       COL,
       EPISODES,
-      new MezeLearner(),
+      //new MezeLearner(),
+      new Sarsa(),
       new MazeRenderer(canvas)
     );
     maze.learn();
