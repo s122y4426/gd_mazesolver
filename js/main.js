@@ -310,6 +310,7 @@
       let a_next = this.get_a(s, Q, epsilon, pi);
       let s_next;
       const s_a_history = [[0, ""]];
+      const goal_pos = (row - 2) * (col - 2) - 1;
       console.log("play!!!!!!!!!!!!!!!!!!!!!!!");
       console.log(
         "###########################################################################################"
@@ -327,7 +328,7 @@
         s_a_history.push([s_next, ""]);
 
         // Q値更新準備（状態価値関数V）
-        if (s_next === 8) {
+        if (s_next === goal_pos) {
           r = 1;
           a_next = "";
         } else {
@@ -343,7 +344,7 @@
         console.log(Q);
 
         // 修了判定
-        let goal_pos = (row - 2) * (col - 2) - 1;
+
         if (s_next === goal_pos) {
           break;
         } else {
@@ -528,7 +529,7 @@
           data[destRow][destCol] = 1;
         }
       }
-      console.log("🚀 ~ file: main.js ~ line 74 ~ Maze ~ getData ~ data", data);
+      console.log("🚀 迷路データ配列", data);
 
       // パラメーターの自動作成
       const theta = [];
