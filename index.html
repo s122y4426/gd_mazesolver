@@ -2,86 +2,85 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <title>My Maze</title>
+    <title>MAZE SOLVER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <script type="text/javascript" src="js/bootstrap.js"></script>
   </head>
-  <body>
-    <p><strong>Maze solver</strong></p>
-    <p style="font-size: small">
-      -- solves the maze generated randomly by using Policy Gradient
-    </p>
-    <canvas> Canvas not supported ... </canvas>
 
-    <!--迷路行数選択-->
-    <form id="params-form" action="#">
-      <label>row: </label>
-      <input
-        type="text"
-        id="row-size"
-        size="2"
-        value="11"
-        style="padding: 10px 20px"
-      />
-      <!--迷路列数選択-->
-      <label>col: </label>
-      <input
-        type="text"
-        id="col-size"
-        size="2"
-        value="11"
-        style="padding: 10px 20px"
-      />
-      <p style="font-size: small">
-        row and col only allow the ODD numbers between 5 and 11. i.e. 5,7,9,11
-      </p>
-      <!--アルゴリズム選択-->
-      <p>
-        <label>Learning algorithm: </label>
-        <select name="algorithm" id="algorithm">
-          <option value="gd">Policy Gradient</option>
-          <option value="qlearning">Q-learning</option>
+  <body>
+    <!--Title-->
+    <p class="fs-2 fw-bolder text-center mx-auto py-1">MAZE SOLVER</p>
+    <form class="row col-10 mx-auto g-3 needs-validation" novalidate>
+      <!--CANVAS-->
+      <canvas> Canvas not supported ... </canvas>
+      <!--ROW-->
+      <div class="col-6">
+        <label for="validationCustom01" class="form-label">Row: </label>
+        <select class="form-select" id="row-size" required>
+          <option value="5">5</option>
+          <option value="7">7</option>
+          <option selected value="9">9</option>
+          <option value="11">11</option>
+          <option value="13">13</option>
+          <option value="15">15</option>
+        </select>
+        <div class="valid-feedback">Looks good!</div>
+      </div>
+      <!--COL-->
+      <div class="col-6">
+        <label for="validationCustom02" class="form-label">Col: </label>
+        <select class="form-select" id="col-size" required>
+          <option value="5">5</option>
+          <option value="7">7</option>
+          <option selected value="9">9</option>
+          <option value="11">11</option>
+          <option value="13">13</option>
+          <option value="15">15</option>
+        </select>
+        <div class="valid-feedback">Looks good!</div>
+      </div>
+      <!--Learning Algorithm-->
+      <div class="col-12">
+        <label for="validationCustom04" class="form-label">
+          Learning Algorithm:
+        </label>
+        <select class="form-select" id="algorithm" required>
+          <option value="gd">Policy gradient</option>
+          <option value="qlearning">Q-learing</option>
           <option value="sarsa">Sarsa</option>
         </select>
-      </p>
-      <!--学習回数選択-->
-      <label>Number of learning : </label>
-      <input
-        type="text"
-        id="episodes"
-        size="2"
-        value="100"
-        style="padding: 10px 30px; width: 30px"
-      />
-      <p style="color: red">
-        <b>*** press the RUN button to see the result ***</b>
-      </p>
-      <p>
+        <div class="invalid-feedback">Please select a valid state.</div>
+      </div>
+      <!--number of learning-->
+      <div class="col-12">
+        <label for="validationCustom05" class="form-label">
+          Number of learning: <span id="range_value">100</span>
+        </label>
         <input
-          type="button"
-          id="btn"
-          style="padding: 10px 30px"
-          　onclick="run()"
-          value="RUN"
+          id="episodes"
+          type="range"
+          class="form-range"
+          min="100"
+          max="20000"
+          step="100"
+          value="100"
         />
-      </p>
+        <div class="invalid-feedback">Please provide a valid zip.</div>
+      </div>
+      <div class="d-grid gap-2 col-6 mx-auto py-3">
+        <button id="btn" class="btn btn-primary" type="button" onclick="run()">
+          RUN
+        </button>
+      </div>
     </form>
-
-    <p>---------------------------------------------------------------</p>
+    <!--RESULT-->
     <div>
       <p><strong>RESULT:</strong></p>
       <p id="result"></p>
       <p id="progress"></p>
       <p id="message"></p>
     </div>
-
-    <p>---------------------------------------------------------------</p>
-    <div>
-      <p>How to read steps:</p>
-      <p style="font-size: small">
-        start: at the top left hand coner | goal: at the bottom rightmost hand
-        conrner<br />e.g. start:0, goal:24
-      </p>
-      <img src="src/map.png" />
-    </div>
-    <script src="js/main.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
   </body>
 </html>
