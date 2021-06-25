@@ -9,77 +9,84 @@
   </head>
 
   <body>
-    <!--Title-->
-    <p class="fs-2 fw-bolder text-center mx-auto py-1">MAZE SOLVER</p>
-    <form class="row col-10 mx-auto g-3 needs-validation" novalidate>
-      <!--CANVAS-->
-      <canvas> Canvas not supported ... </canvas>
-      <!--ROW-->
-      <div class="col-6">
-        <label for="validationCustom01" class="form-label">Row: </label>
-        <select class="form-select" id="row-size" required>
-          <option value="5">5</option>
-          <option value="7">7</option>
-          <option selected value="9">9</option>
-          <option value="11">11</option>
-          <option value="13">13</option>
-          <option value="15">15</option>
-        </select>
-        <div class="valid-feedback">Looks good!</div>
-      </div>
-      <!--COL-->
-      <div class="col-6">
-        <label for="validationCustom02" class="form-label">Col: </label>
-        <select class="form-select" id="col-size" required>
-          <option value="5">5</option>
-          <option value="7">7</option>
-          <option selected value="9">9</option>
-          <option value="11">11</option>
-          <option value="13">13</option>
-          <option value="15">15</option>
-        </select>
-        <div class="valid-feedback">Looks good!</div>
-      </div>
-      <!--Learning Algorithm-->
-      <div class="col-12">
-        <label for="validationCustom04" class="form-label">
-          Learning Algorithm:
-        </label>
-        <select class="form-select" id="algorithm" required>
-          <option value="gd">Policy gradient</option>
-          <option value="qlearning">Q-learing</option>
-          <option value="sarsa">Sarsa</option>
-        </select>
-        <div class="invalid-feedback">Please select a valid state.</div>
-      </div>
-      <!--number of learning-->
-      <div class="col-12">
-        <label for="validationCustom05" class="form-label">
-          Number of learning: <span id="range_value">100</span>
-        </label>
-        <input
-          id="episodes"
-          type="range"
-          class="form-range"
-          min="100"
-          max="20000"
-          step="100"
-          value="100"
-        />
-        <div class="invalid-feedback">Please provide a valid zip.</div>
-      </div>
-      <div class="d-grid gap-2 col-6 mx-auto py-3">
-        <button id="btn" class="btn btn-primary" type="button" onclick="run()">
-          RUN
-        </button>
-      </div>
-    </form>
-    <!--RESULT-->
-    <div>
-      <p><strong>RESULT:</strong></p>
-      <p id="result"></p>
-      <p id="progress"></p>
-      <p id="message"></p>
+    <div class="container-fluid">
+      <!--Title-->
+      <p class="fs-2 fw-bolder text-center mx-auto py-1">MAZE SOLVER</p>
+      <form class="row col-10 mx-auto g-3 needs-validation" novalidate>
+        <!--CANVAS-->
+        <canvas> Canvas not supported ... </canvas>
+        <!--ROW-->
+        <div class="col-6">
+          <label for="validationCustom01" class="form-label">Row: </label>
+          <select class="form-select" id="row-size" required>
+            <option value="5">5</option>
+            <option value="7">7</option>
+            <option selected value="9">9</option>
+            <option value="11">11</option>
+            <option value="13">13</option>
+            <option value="15">15</option>
+          </select>
+          <div class="valid-feedback">Looks good!</div>
+        </div>
+        <!--COL-->
+        <div class="col-6">
+          <label for="validationCustom02" class="form-label">Col: </label>
+          <select class="form-select" id="col-size" required>
+            <option value="5">5</option>
+            <option value="7">7</option>
+            <option selected value="9">9</option>
+            <option value="11">11</option>
+            <option value="13">13</option>
+            <option value="15">15</option>
+          </select>
+          <div class="valid-feedback">Looks good!</div>
+        </div>
+        <!--Learning Algorithm-->
+        <div class="col-12">
+          <label for="validationCustom04" class="form-label">
+            Learning Algorithm:
+          </label>
+          <select class="form-select" id="algorithm" required>
+            <option value="gd">Policy gradient</option>
+            <option value="qlearning">Q-learing</option>
+            <option value="sarsa">Sarsa</option>
+          </select>
+          <div class="invalid-feedback">Please select a valid state.</div>
+        </div>
+        <!--number of learning-->
+        <div class="col-12">
+          <label for="validationCustom05" class="form-label">
+            Number of learning: <span id="range_value">100</span>
+          </label>
+          <input
+            id="episodes"
+            type="range"
+            class="form-range"
+            min="100"
+            max="20000"
+            step="100"
+            value="100"
+          />
+          <div class="invalid-feedback">Please provide a valid zip.</div>
+        </div>
+        <div class="d-grid gap-2 col-6 mx-auto py-3">
+          <button
+            id="btn"
+            class="btn btn-primary"
+            type="button"
+            onclick="run()"
+          >
+            RUN
+          </button>
+        </div>
+      </form>
+      <!--RESULT-->
+      <hr />
+      <row class="col-5 mx-auto g-3">
+        <p><strong>RESULT: </strong><span id="message"></span></p>
+        <p id="result"></p>
+        <p id="progress" class="text-break"></p>
+      </row>
     </div>
     <script type="text/javascript" src="js/main.js"></script>
   </body>

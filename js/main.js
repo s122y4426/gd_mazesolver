@@ -16,7 +16,7 @@
     return true;
   };
 
-  //
+  //　スライドバーの値表示用関数
   window.onload = () => {
     const noflearn = document.getElementById("episodes"); // input要素
     const current_value = document.getElementById("range_value"); // 埋め込む先のspan要素
@@ -413,7 +413,7 @@
     // Pathを迷路に描画
     render_path(s_a_history, _col) {
       this.ctx.fillStyle = "green";
-      this.ctx.globalAlpha = 0.4;
+      this.ctx.globalAlpha = 0.3;
       for (let s_a of s_a_history) {
         let y = Math.floor(s_a[0] / (_col - 2)); //縦方向y
         let x = s_a[0] - y * (_col - 2); //横方向x
