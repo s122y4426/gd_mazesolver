@@ -1,7 +1,7 @@
 "use strict";
 
 (() => {
-  //配列同士の比較用関数
+  // 配列同士の比較用関数
   // https://www.delftstack.com/ja/howto/javascript/compare-two-arrays-javascript/
   Array.prototype.equals = function (getArray) {
     if (this.length != getArray.length) return false;
@@ -15,6 +15,16 @@
     }
     return true;
   };
+
+  //
+  window.onload = () => {
+    const noflearn = document.getElementById("episodes"); // input要素
+    const current_value = document.getElementById("range_value"); // 埋め込む先のspan要素
+
+    noflearn.addEventListener("input", (e) => {
+      current_value.innerText = e.target.value;
+    });
+  }; // スライダー変化時にイベントを発火
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   //  MezeLearner (Gradient Descent)
