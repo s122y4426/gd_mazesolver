@@ -376,7 +376,6 @@
       let s_a_history;
 
       for (let i = 0; i < episode; i++) {
-        document.getElementById("notice").innerHTML = "ooooooooooooo";
         // ε-greedyの値を少しずつ小さく
         epsilon = epsilon / 2;
 
