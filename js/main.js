@@ -158,7 +158,7 @@
     }
 
     //エピソード回数分、学習
-    run(theta, row, col, episodes) {
+    run(theta, row, col, algo, episodes) {
       const episode = episodes;
       let s_a_history = [];
       let pi_new = [];
@@ -198,7 +198,7 @@
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
-  //  MezeLearner (SARSA)
+  //  MezeLearner (Q-learning and Sarsa)
   ///////////////////////////////////////////////////////////////////////////////////////////////
   class Sarsa {
     constructor() {}
@@ -289,27 +289,39 @@
     }
 
     // Q値の更新
-    q_learning(s, a, r, s_next, a_next, Q) {
+    learning(algo, s, a, r, goal_pos, s_next, a_next, Q) {
       const eta = 0.1;
       const gamma = 0.9;
 
-      console.log("state: ", s, "action: ", a);
-      console.log(Q[s][a]);
-      s_next === 8
-        ? (Q[s][a] = Q[s][a] + eta * (r - Q[s][a]))
-        : (Q[s][a] =
-            Q[s][a] + eta * (r + gamma * this.return_max(Q, s_next)) - Q[s][a]);
-      return Q;
+      switch (algo) {
+        case "qlearning":
+          s_next === goal_pos
+            ? (Q[s][a] = Q[s][a] + eta * (r - Q[s][a]))
+            : (Q[s][a] =
+                Q[s][a] +
+                eta * (r + gamma * this.return_max(Q, s_next)) -
+                Q[s][a]);
+          return Q;
+        case "sarsa":
+          console.log("state: ", s, "action: ", a);
+          console.log(Q[s][a]);
+          s_next === goal_pos
+            ? (Q[s][a] = Q[s][a] + eta * (r - Q[s][a]))
+            : (Q[s][a] =
+                Q[s][a] + eta * (r + gamma * Q[s_next][a_next] - Q[s][a]));
+          return Q;
+      }
     }
 
     // 1エピソードの実行
-    play(Q, epsilon, pi, row, col) {
+    play(Q, epsilon, pi, row, col, algo) {
       let s = 0;
       let r = 0;
       let a;
       let a_next = this.get_a(s, Q, epsilon, pi);
       let s_next;
       const s_a_history = [[0, ""]];
+      const goal_pos = (row - 2) * (col - 2) - 1;
       console.log("play!!!!!!!!!!!!!!!!!!!!!!!");
       console.log(
         "###########################################################################################"
@@ -327,7 +339,7 @@
         s_a_history.push([s_next, ""]);
 
         // Q値更新準備（状態価値関数V）
-        if (s_next === 8) {
+        if (s_next === goal_pos) {
           r = 1;
           a_next = "";
         } else {
@@ -339,11 +351,11 @@
           console.log("☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆");
         }
         // Q値更新
-        Q = this.q_learning(s, a, r, s_next, a_next, Q);
+        Q = this.learning(algo, s, a, r, goal_pos, s_next, a_next, Q);
         console.log(Q);
 
         // 修了判定
-        let goal_pos = (row - 2) * (col - 2) - 1;
+
         if (s_next === goal_pos) {
           break;
         } else {
@@ -355,7 +367,7 @@
       return [s_a_history, Q];
     }
 
-    run(theta, row, col, episodes) {
+    run(theta, row, col, algo, episodes) {
       // MAIN処理開始
       let epsilon = 0.5;
       const episode = episodes;
@@ -364,11 +376,12 @@
       let s_a_history;
 
       for (let i = 0; i < episode; i++) {
+        document.getElementById("notice").innerHTML = "ooooooooooooo";
         // ε-greedyの値を少しずつ小さく
         epsilon = epsilon / 2;
 
         // 1エピソード実行して履歴と行動価値観数を取得
-        [s_a_history, Q] = this.play(Q, epsilon, pi, row, col, episodes);
+        [s_a_history, Q] = this.play(Q, epsilon, pi, row, col, algo);
         //console.table(Q);
 
         // 結果
@@ -446,12 +459,12 @@
   //  MAZE
   ///////////////////////////////////////////////////////////////////////////////////////////////
   class Maze {
-    constructor(row, col, episodes, learner, renderer) {
+    constructor(row, col, algo, episodes, learner, renderer) {
       if (
         row < 5 ||
         col < 5 ||
-        row > 11 ||
-        col > 11 ||
+        row > 13 ||
+        col > 13 ||
         row % 2 === 0 ||
         col % 2 === 0
       ) {
@@ -463,6 +476,7 @@
       this.renderer = renderer; // 描画用クラス
       this.row = Number(row);
       this.col = Number(col);
+      this.algo = algo;
       this.episodes = Number(episodes);
 
       //this.data = this.getData();
@@ -528,7 +542,7 @@
           data[destRow][destCol] = 1;
         }
       }
-      console.log("🚀 ~ file: main.js ~ line 74 ~ Maze ~ getData ~ data", data);
+      console.log("🚀 迷路データ配列", data);
 
       // パラメーターの自動作成
       const theta = [];
@@ -552,22 +566,13 @@
       return [data, theta]; //[迷路データ, theta初期値]
     }
 
-    // MazeLearner内のlearnを呼び出す
-    // learn() {
-    //   this.s_a_history = this.learner.run(
-    //     this.theta,
-    //     this.row,
-    //     this.col,
-    //     this.episodes
-    //   );
-    // }
-
-    // Sarsa内のlearnを呼び出す
+    // 選択アルゴリズムのlearnを呼び出す
     learn() {
       this.s_a_history = this.learner.run(
         this.theta,
         this.row,
         this.col,
+        this.algo,
         this.episodes
       );
     }
@@ -583,9 +588,11 @@
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
   const canvas = document.querySelector("canvas");
-  const maze = new Maze(
+  let maze;
+  maze = new Maze(
     7,
     7,
+    "gd",
     5000,
     new MezeLearner(),
     new MazeRenderer(canvas)
@@ -597,16 +604,44 @@
   document.getElementById("btn").onclick = function () {
     const ROW = document.getElementById("row-size").value;
     const COL = document.getElementById("col-size").value;
+    const ALGO = document.getElementById("algorithm").value;
     const EPISODES = document.getElementById("episodes").value;
+
     // Validation
-    const maze = new Maze(
-      ROW,
-      COL,
-      EPISODES,
-      //new MezeLearner(),
-      new Sarsa(),
-      new MazeRenderer(canvas)
-    );
+    console.log(ALGO);
+    switch (ALGO) {
+      case "gd":
+        maze = new Maze(
+          ROW,
+          COL,
+          ALGO,
+          EPISODES,
+          new MezeLearner(),
+          new MazeRenderer(canvas)
+        );
+        break;
+      case "qlearning":
+        maze = new Maze(
+          ROW,
+          COL,
+          ALGO,
+          EPISODES,
+          new Sarsa(),
+          new MazeRenderer(canvas)
+        );
+        break;
+      case "sarsa":
+        maze = new Maze(
+          ROW,
+          COL,
+          ALGO,
+          EPISODES,
+          new Sarsa(),
+          new MazeRenderer(canvas)
+        );
+        break;
+    }
+
     maze.learn();
     maze.render();
 

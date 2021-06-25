@@ -11,26 +11,40 @@
     </p>
     <canvas> Canvas not supported ... </canvas>
 
+    <p id="notice">aaaaaaaaaaaaaa</p>
+
+    <!--迷路行数選択-->
     <form id="params-form" action="#">
       <label>row: </label>
       <input
         type="text"
         id="row-size"
         size="2"
-        value="7"
+        value="11"
         style="padding: 10px 20px"
       />
+      <!--迷路列数選択-->
       <label>col: </label>
       <input
         type="text"
         id="col-size"
         size="2"
-        value="7"
+        value="11"
         style="padding: 10px 20px"
       />
       <p style="font-size: small">
         row and col only allow the ODD numbers between 5 and 11. i.e. 5,7,9,11
       </p>
+      <!--アルゴリズム選択-->
+      <p>
+        <label>Learning algorithm: </label>
+        <select name="algorithm" id="algorithm">
+          <option value="gd">Policy Gradient</option>
+          <option value="qlearning">Q-learning</option>
+          <option value="sarsa">Sarsa</option>
+        </select>
+      </p>
+      <!--学習回数選択-->
       <label>Number of learning : </label>
       <input
         type="text"
