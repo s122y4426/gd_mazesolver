@@ -11,6 +11,8 @@
     </p>
     <canvas> Canvas not supported ... </canvas>
 
+    <p id="notice">aaaaaaaaaaaaaa</p>
+
     <!--迷路行数選択-->
     <form id="params-form" action="#">
       <label>row: </label>
@@ -38,6 +40,7 @@
         <label>Learning algorithm: </label>
         <select name="algorithm" id="algorithm">
           <option value="gd">Policy Gradient</option>
+          <option value="qlearning">Q-learning</option>
           <option value="sarsa">Sarsa</option>
         </select>
       </p>
