@@ -420,8 +420,8 @@
         this.ctx.fillRect(
           (x + 1) * this.WALL_SIZE, //横x
           (y + 1) * this.WALL_SIZE, //縦y
-          this.WALL_SIZE,
-          this.WALL_SIZE
+          this.WALL_SIZE - 0.2, //Grid線
+          this.WALL_SIZE - 0.2
         );
       }
     }
@@ -439,8 +439,8 @@
             this.ctx.fillRect(
               col * this.WALL_SIZE,
               row * this.WALL_SIZE,
-              this.WALL_SIZE,
-              this.WALL_SIZE
+              this.WALL_SIZE - 0.2, //Grid線
+              this.WALL_SIZE - 0.2
             );
           }
         }
