@@ -596,6 +596,14 @@
   //  MAIN
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
+  function toggle_button() {
+    if (btn.disabled) {
+      btn.disabled = false;
+    } else {
+      btn.disabled = true;
+    }
+  }
+
   const canvas = document.querySelector("canvas");
   let maze;
   maze = new Maze(
@@ -610,7 +618,11 @@
   maze.render();
 
   // フォームからユーザー入力パラメーター情報を取得
-  document.getElementById("btn").onclick = function () {
+  const btn = document.getElementById("btn");
+  //document.getElementById("btn").onclick = function () {
+  btn.addEventListener("click", () => {
+    console.log(btn.disabled);
+    toggle_button();
     const ROW = document.getElementById("row-size").value;
     const COL = document.getElementById("col-size").value;
     const ALGO = document.getElementById("algorithm").value;
@@ -661,7 +673,6 @@
     let progress = "";
     let steps = [];
     for (let p of maze.s_a_history) {
-      console.log(p);
       progress = progress + "→" + p[0];
       steps.push(p[0]);
     }
@@ -677,5 +688,6 @@
     } else {
       document.getElementById("message").innerHTML = "FAILED";
     }
-  };
+    toggle_button();
+  });
 })();
