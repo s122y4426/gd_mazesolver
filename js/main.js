@@ -412,6 +412,7 @@
 
     // Pathを迷路に描画
     render_path(s_a_history, _col) {
+      this.ctx.globalCompositeOperation = "destination-over"; // 参考: https://www.yoheim.net/blog.php?q=20121206
       this.ctx.fillStyle = "green";
       this.ctx.globalAlpha = 0.3;
       for (let s_a of s_a_history) {
@@ -422,6 +423,23 @@
           (y + 1) * this.WALL_SIZE, //縦y
           this.WALL_SIZE - 0.2, //Grid線
           this.WALL_SIZE - 0.2
+        );
+      }
+
+      // スタートとゴールを赤枠で囲む
+      for (let s_a of [s_a_history[0], s_a_history[s_a_history.length - 1]]) {
+        console.log(s_a);
+        this.ctx.globalCompositeOperation = "source-over";
+        this.ctx.strokeStyle = "red";
+        this.ctx.lineWidth = 2;
+        this.ctx.globalAlpha = 1;
+        let y = Math.floor(s_a[0] / (_col - 2)); //縦方向y
+        let x = s_a[0] - y * (_col - 2); //横方向x
+        this.ctx.strokeRect(
+          (x + 1) * this.WALL_SIZE, //横x
+          (y + 1) * this.WALL_SIZE, //縦y
+          this.WALL_SIZE + 0.2, //Grid線
+          this.WALL_SIZE + 0.2
         );
       }
     }
@@ -459,8 +477,10 @@
           );
         }
       }
-      // アニメーションの描画
-      this.render_path(s_a_history, _col);
+      // 計算済みパスがある場合は描画
+      if (s_a_history.length > 0) {
+        this.render_path(s_a_history, _col);
+      }
     }
   }
 
@@ -596,19 +616,11 @@
   //  MAIN
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  function toggle_button() {
-    if (btn.disabled) {
-      btn.disabled = false;
-    } else {
-      btn.disabled = true;
-    }
-  }
-
   const canvas = document.querySelector("canvas");
   let maze;
   maze = new Maze(
-    7,
-    7,
+    9,
+    9,
     "gd",
     5000,
     new MezeLearner(),
@@ -622,7 +634,6 @@
   //document.getElementById("btn").onclick = function () {
   btn.addEventListener("click", () => {
     console.log(btn.disabled);
-    toggle_button();
     const ROW = document.getElementById("row-size").value;
     const COL = document.getElementById("col-size").value;
     const ALGO = document.getElementById("algorithm").value;
@@ -688,6 +699,5 @@
     } else {
       document.getElementById("message").innerHTML = "FAILED";
     }
-    toggle_button();
   });
 })();
