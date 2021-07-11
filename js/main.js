@@ -613,7 +613,131 @@
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
-  //  MAIN
+  //  MAIN　関数宣言部
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+
+  // ボタンの状態を取得して反転する
+  function toggleButton() {
+    console.log("ボタン部呼ばれました！！！！！！！");
+    return new Promise((resolve, reject) => {
+      const btn = document.getElementById("btn");
+      btn.disabled = !btn.disabled;
+      resolve();
+    });
+  }
+
+  function learnAndRenderPath() {
+    return new Promise((resolve, reject) => {
+      console.log(btn.disabled);
+      const ROW = document.getElementById("row-size").value;
+      const COL = document.getElementById("col-size").value;
+      const ALGO = document.getElementById("algorithm").value;
+      const EPISODES = document.getElementById("episodes").value;
+
+      // Validation
+      console.log(ALGO);
+      switch (ALGO) {
+        case "gd":
+          maze = new Maze(
+            ROW,
+            COL,
+            ALGO,
+            EPISODES,
+            new MezeLearner(),
+            new MazeRenderer(canvas)
+          );
+          break;
+        case "qlearning":
+          maze = new Maze(
+            ROW,
+            COL,
+            ALGO,
+            EPISODES,
+            new Sarsa(),
+            new MazeRenderer(canvas)
+          );
+          break;
+        case "sarsa":
+          maze = new Maze(
+            ROW,
+            COL,
+            ALGO,
+            EPISODES,
+            new Sarsa(),
+            new MazeRenderer(canvas)
+          );
+          break;
+      }
+
+      maze.learn();
+      maze.render();
+
+      console.log(maze);
+      const result = maze.s_a_history.length + " steps";
+      document.getElementById("result").innerHTML = result;
+
+      let progress = "";
+      let steps = [];
+      for (let p of maze.s_a_history) {
+        progress = progress + "→" + p[0];
+        steps.push(p[0]);
+      }
+      document.getElementById("progress").innerHTML = progress;
+
+      /** 配列内で値が重複してないか調べる **/
+      function existsSameValue(a) {
+        var s = new Set(a);
+        return s.size === a.length;
+      }
+      if (existsSameValue(steps)) {
+        document.getElementById("message").innerHTML = "SUCCESS!!!";
+      } else {
+        document.getElementById("message").innerHTML = "FAILED";
+      }
+      resolve();
+    });
+  }
+
+  //GENERATOR
+  function* textGene(num) {
+    for (let i = 0; i < num; i++) {
+      yield (document.getElementById("text").innerHTML = `learning... ${
+        i + 1
+      }/${num}`);
+    }
+  }
+
+  // ジェネレーターでカウントアップ
+  function callback() {
+    return new Promise((resolve, reject) => {
+      const gen = textGene(10);
+      setInterval(() => {
+        var next = gen.next();
+        if (next.done) {
+          resolve();
+        }
+      }, 100);
+    });
+  }
+
+  function sleep() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, 500);
+    });
+  }
+
+  async function solveMaze() {
+    await toggleButton();
+    await sleep();
+    await learnAndRenderPath();
+    await sleep();
+    await toggleButton();
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  //  MAIN　処理部
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
   const canvas = document.querySelector("canvas");
@@ -631,73 +755,7 @@
 
   // フォームからユーザー入力パラメーター情報を取得
   const btn = document.getElementById("btn");
-  //document.getElementById("btn").onclick = function () {
   btn.addEventListener("click", () => {
-    console.log(btn.disabled);
-    const ROW = document.getElementById("row-size").value;
-    const COL = document.getElementById("col-size").value;
-    const ALGO = document.getElementById("algorithm").value;
-    const EPISODES = document.getElementById("episodes").value;
-
-    // Validation
-    console.log(ALGO);
-    switch (ALGO) {
-      case "gd":
-        maze = new Maze(
-          ROW,
-          COL,
-          ALGO,
-          EPISODES,
-          new MezeLearner(),
-          new MazeRenderer(canvas)
-        );
-        break;
-      case "qlearning":
-        maze = new Maze(
-          ROW,
-          COL,
-          ALGO,
-          EPISODES,
-          new Sarsa(),
-          new MazeRenderer(canvas)
-        );
-        break;
-      case "sarsa":
-        maze = new Maze(
-          ROW,
-          COL,
-          ALGO,
-          EPISODES,
-          new Sarsa(),
-          new MazeRenderer(canvas)
-        );
-        break;
-    }
-
-    maze.learn();
-    maze.render();
-
-    console.log(maze);
-    const result = maze.s_a_history.length + " steps";
-    document.getElementById("result").innerHTML = result;
-
-    let progress = "";
-    let steps = [];
-    for (let p of maze.s_a_history) {
-      progress = progress + "→" + p[0];
-      steps.push(p[0]);
-    }
-    document.getElementById("progress").innerHTML = progress;
-
-    /** 配列内で値が重複してないか調べる **/
-    function existsSameValue(a) {
-      var s = new Set(a);
-      return s.size === a.length;
-    }
-    if (existsSameValue(steps)) {
-      document.getElementById("message").innerHTML = "SUCCESS!!!";
-    } else {
-      document.getElementById("message").innerHTML = "FAILED";
-    }
+    solveMaze();
   });
 })();
