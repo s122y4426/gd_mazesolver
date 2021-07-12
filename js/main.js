@@ -1,6 +1,10 @@
 "use strict";
 
 (() => {
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  //  拡張自作関数
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+
   // 配列同士の比較用関数
   // https://www.delftstack.com/ja/howto/javascript/compare-two-arrays-javascript/
   Array.prototype.equals = function (getArray) {
@@ -634,6 +638,7 @@
     });
   }
 
+  // 最短経路を学習してキャンバスにパスを描画
   function learnAndRenderPath() {
     return new Promise((resolve, reject) => {
       console.log(btn.disabled);

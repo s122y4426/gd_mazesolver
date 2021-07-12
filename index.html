@@ -14,9 +14,10 @@
         <div class="col-md-6 offset-md-3">
           <!--Title-->
           <p class="fs-2 fw-bolder text-center mx-auto py-1">AI MAZE SOLVER</p>
+          <!--FORM-->
           <form class="row col-10 mx-auto g-3 needs-validation" novalidate>
             <!--CANVAS-->
-            <canvas> Canvas not supported ... </canvas>
+            <canvas> </canvas>
             <!--ROW-->
             <div class="col-6">
               <label for="validationCustom01" class="form-label">Row: </label>
@@ -72,10 +73,15 @@
               <div class="invalid-feedback">Please provide a valid zip.</div>
             </div>
             <!--BUTTON-->
-            <div class="d-grid gap-2 col-6 mx-auto py-3">
-              <button id="btn" class="btn btn-primary" type="button">
-                RUN
-              </button>
+            <div class="col-12">
+              <div class="d-flex justify-content-around">
+                <button id="gbtn" class="btn btn-primary btn-lg">
+                  Generate
+                </button>
+                <button id="btn" class="btn btn-primary btn-lg px-4">
+                  Solve
+                </button>
+              </div>
               <span id="text"></span>
             </div>
           </form>
