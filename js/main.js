@@ -512,6 +512,7 @@
       [this.data, this.theta] = this.getData();
     }
 
+    //棒倒し法で迷路を作成
     getData() {
       const data = [];
 
@@ -542,32 +543,39 @@
         for (let col = 2; col < this.col - 1; col += 2) {
           let destRow;
           let destCol;
+          let dir;
 
           do {
-            const dir =
+            dir =
               row === 2
-                ? Math.floor(Math.random() * 4)
-                : Math.floor(Math.random() * 3) + 1;
+                ? Math.floor(Math.random() * 5)
+                : Math.floor(Math.random() * 4) + 1;
+            console.log("row col: ", row, col, "dir: ", dir);
             switch (dir) {
               case 0: //up
                 destRow = row - 1;
                 destCol = col;
                 break;
-              case 1: //down
-                destRow = row + 1;
-                destCol = col;
-                break;
-              case 2: //left
-                destRow = row;
-                destCol = col - 1;
-                break;
-              case 3: //right
+              case 1: //right
                 destRow = row;
                 destCol = col + 1;
                 break;
+              case 2: //down
+                destRow = row + 1;
+                destCol = col;
+                break;
+              case 3: //left
+                destRow = row;
+                destCol = col - 1;
+                break;
+              case 4: //Do nothing
+                console.log(dir);
+                destRow = row;
+                destCol = col;
+                break;
             }
-          } while (data[destRow][destCol] === 1);
-
+            //重なっていたら別の方向に棒を倒す && 棒を倒さない場合はそのまま終了
+          } while (data[destRow][destCol] === 1 && dir !== 4);
           data[destRow][destCol] = 1;
         }
       }
