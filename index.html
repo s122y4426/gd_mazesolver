@@ -44,6 +44,15 @@
               </select>
               <div class="valid-feedback">Looks good!</div>
             </div>
+            <!--Generate BUTTON-->
+            <div class="d-flex justify-content-center">
+              <input
+                type="button"
+                id="gbtn"
+                value="Generate"
+                class="btn btn-primary w-50 mb-3"
+              />
+            </div>
             <!--Learning Algorithm-->
             <div class="col-12">
               <label for="validationCustom04" class="form-label">
@@ -72,18 +81,16 @@
               />
               <div class="invalid-feedback">Please provide a valid zip.</div>
             </div>
-            <!--BUTTON-->
-            <div class="col-12">
-              <div class="d-flex justify-content-around">
-                <button id="gbtn" class="btn btn-primary btn-lg">
-                  Generate
-                </button>
-                <button id="btn" class="btn btn-primary btn-lg px-4">
-                  Solve
-                </button>
-              </div>
-              <span id="text"></span>
+            <!--Solve BUTTON-->
+            <div class="d-flex justify-content-around">
+              <input
+                type="button"
+                id="btn"
+                value="Solve"
+                class="btn btn-primary w-50"
+              />
             </div>
+            <span id="text"></span>
           </form>
           <!--RESULT-->
           <hr />
