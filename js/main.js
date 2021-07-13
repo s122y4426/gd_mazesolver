@@ -446,6 +446,24 @@ class MazeRenderer {
         );
       }
     }
+    // スタートとゴールを赤枠で囲む
+    this.ctx.globalCompositeOperation = "source-over";
+    this.ctx.strokeStyle = "red";
+    this.ctx.lineWidth = 2;
+    this.ctx.globalAlpha = 1;
+    this.ctx.strokeRect(
+      (0 + 1) * this.WALL_SIZE, //横x
+      (0 + 1) * this.WALL_SIZE, //縦y
+      this.WALL_SIZE + 0.2, //Grid線
+      this.WALL_SIZE + 0.2
+    );
+    this.ctx.strokeRect(
+      (data[0].length - 2) * this.WALL_SIZE, //横x
+      (data.length - 2) * this.WALL_SIZE, //縦y
+      this.WALL_SIZE + 0.2, //Grid線
+      this.WALL_SIZE + 0.2
+    );
+
     // 計算済みパスがある場合は描画
     if (s_a_history.length > 0) {
       this.render_path(s_a_history, _col);
@@ -470,7 +488,6 @@ class MazeRenderer {
 
     // スタートとゴールを赤枠で囲む
     for (let s_a of [s_a_history[0], s_a_history[s_a_history.length - 1]]) {
-      console.log(s_a);
       this.ctx.globalCompositeOperation = "source-over";
       this.ctx.strokeStyle = "red";
       this.ctx.lineWidth = 2;
@@ -769,41 +786,4 @@ gbtn.addEventListener("click", () => {
 const btn = document.getElementById("btn");
 btn.addEventListener("click", () => {
   solveMaze();
-  // maze.algo = document.getElementById("algorithm").value;
-  // maze.episodes = document.getElementById("episodes").value;
-  // maze.learner = maze.algo === "gd" ? new MezeLearner() : new Sarsa();
-  // maze.learn();
-  // maze.render();
-
-  // console.log(maze);
-  // const result = maze.s_a_history.length + " steps";
-  // document.getElementById("result").innerHTML = result;
-
-  // let progress = "";
-  // let steps = [];
-  // for (let p of maze.s_a_history) {
-  //   progress = progress + "→" + p[0];
-  //   steps.push(p[0]);
-  // }
-  // document.getElementById("progress").innerHTML = progress;
-
-  // /** 配列内で値が重複してないか調べる **/
-  // function existsSameValue(a) {
-  //   var s = new Set(a);
-  //   return s.size === a.length;
-  // }
-  // if (existsSameValue(steps)) {
-  //   document.getElementById("message").innerHTML = "SUCCESS!!!";
-  // } else {
-  //   document.getElementById("message").innerHTML = "FAILED";
-  // }
 });
-
-/*
-Generate
-迷路作る
-return 迷路データ配列, thetaデータ配列
-
-Learn
-学習して描画
-*/
