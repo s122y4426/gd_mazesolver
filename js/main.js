@@ -126,7 +126,6 @@ class MezeLearner {
     let total = s_a_history.length - 1; //ゴールまでの総ステップ数
     let s_count = theta.length;
     let a_count = theta[0].length;
-    console.log(s_count, a_count);
 
     // 変化量の計算
     for (let i = 0; i < s_count; i++) {
@@ -170,15 +169,64 @@ class MezeLearner {
     return delta_sum;
   }
 
-  //エピソード回数分、学習
-  run(theta, row, col, algo, episodes) {
+  run = async (theta, row, col, algo, episodes) => {
     const episode = episodes;
     let s_a_history = [];
     let pi_new = [];
     let pi_delta = 0;
     const stop_epsilon = Math.pow(10, -4); // しきい値
-    //const theta = theta_0; // パラメータθ
     let pi = this.get_pi(theta); // 方策
+    let count = 0;
+
+    const _run = async () => {
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          document.getElementById("text").innerHTML = `learning... ${
+            count + 1
+          }/${episode}`;
+          resolve();
+        }, 10);
+      });
+
+      count++;
+      if (count < episode || pi_delta < stop_epsilon) {
+        //1エピソード実行して履歴取得
+        s_a_history = this.play(pi, row, col);
+        //パラメータθの更新
+        theta = this.update_theta(theta, pi, s_a_history);
+        //方策の更新
+        pi_new = this.get_pi(theta);
+        //方策の変化量
+        pi_delta = pi_delta = this.delta_sum_abs(pi_new, pi);
+        pi = JSON.parse(JSON.stringify(pi_new)); //配列のコピー（値渡し）
+
+        // 結果出力
+        console.log(
+          "エピソード: ",
+          count + 1,
+          " 総ステップ数: ",
+          s_a_history.length,
+          " 方策変化量: ",
+          pi_delta
+        );
+
+        await _run();
+      }
+    };
+    await _run();
+    maze.s_a_history = s_a_history;
+    console.log("===学習終了====");
+  };
+
+  //エピソード回数分、学習
+  run2(theta, row, col, algo, episodes) {
+    const episode = episodes;
+    let s_a_history = [];
+    let pi_new = [];
+    let pi_delta = 0;
+    const stop_epsilon = Math.pow(10, -4); // しきい値
+    let pi = this.get_pi(theta); // 方策
+
     for (let i = 0; i < episode; i++) {
       //1エピソード実行して履歴取得
       s_a_history = this.play(pi, row, col);
@@ -367,8 +415,7 @@ class Sarsa {
       Q = this.learning(algo, s, a, r, goal_pos, s_next, a_next, Q);
       console.log(Q);
 
-      // 修了判定
-
+      // 終了判定
       if (s_next === goal_pos) {
         break;
       } else {
@@ -380,7 +427,46 @@ class Sarsa {
     return [s_a_history, Q];
   }
 
-  run(theta, row, col, algo, episodes) {
+  run = async (theta, row, col, algo, episodes) => {
+    let epsilon = 0.5;
+    const episode = episodes;
+    let Q = this.get_Q(theta);
+    let pi = this.get_pi(theta);
+    let s_a_history;
+    let count = 0;
+
+    const _run = async () => {
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          document.getElementById("text").innerHTML = `learning... ${
+            count + 1
+          }/${episode}`;
+          resolve();
+        }, 1);
+      });
+
+      count++;
+      if (count < episode) {
+        // ε-greedyの値を少しずつ小さく
+        epsilon = epsilon / 2;
+
+        // 1エピソード実行して履歴と行動価値観数を取得
+        [s_a_history, Q] = this.play(Q, epsilon, pi, row, col, algo);
+        //console.table(Q);
+
+        // 結果
+        console.log(count, s_a_history);
+        console.log("====================================================");
+
+        await _run();
+      }
+    };
+    await _run();
+    maze.s_a_history = s_a_history;
+    console.log("===学習終了====");
+  };
+
+  run2(theta, row, col, algo, episodes) {
     // MAIN処理開始
     let epsilon = 0.5;
     const episode = episodes;
@@ -400,6 +486,7 @@ class Sarsa {
       console.log(i, s_a_history);
       console.log("====================================================");
     }
+
     return s_a_history;
   }
 }
@@ -465,6 +552,7 @@ class MazeRenderer {
     );
 
     // 計算済みパスがある場合は描画
+    console.log("s_a_history:", s_a_history);
     if (s_a_history.length > 0) {
       this.render_path(s_a_history, _col);
     }
@@ -624,13 +712,11 @@ class Maze {
 
   // 選択アルゴリズムのlearnを呼び出す
   learn() {
-    this.s_a_history = this.learner.run(
-      this.theta,
-      this.row,
-      this.col,
-      this.algo,
-      this.episodes
-    );
+    return new Promise((resolve, reject) => {
+      this.s_a_history = this.learner
+        .run(this.theta, this.row, this.col, this.algo, this.episodes)
+        .then(() => resolve());
+    });
   }
 
   // MazeRenderer内のrenderを呼び出す
@@ -653,12 +739,22 @@ function toggleButton() {
 }
 
 // 最短経路を学習してキャンバスにパスを描画
-function learnAndRenderPath() {
+function learnPath() {
   return new Promise((resolve, reject) => {
+    console.log("learnPath() is callee!!");
     maze.algo = document.getElementById("algorithm").value;
     maze.episodes = document.getElementById("episodes").value;
     maze.learner = maze.algo === "gd" ? new MezeLearner() : new Sarsa();
-    maze.learn();
+    console.log("maze.learn() is callee!!");
+    console.log(maze);
+    maze.learn().then(() => resolve());
+  });
+}
+
+// 最短経路を学習してキャンバスにパスを描画
+function RenderPath() {
+  return new Promise((resolve, reject) => {
+    console.log("RenderPath() is callee!!");
     maze.render();
 
     console.log(maze);
@@ -687,44 +783,26 @@ function learnAndRenderPath() {
   });
 }
 
-//GENERATOR
-function* textGene(num) {
-  for (let i = 0; i < num; i++) {
-    yield (document.getElementById("text").innerHTML = `learning... ${
-      i + 1
-    }/${num}`);
-  }
-}
-
-// ジェネレーターでカウントアップ
-function callback() {
-  return new Promise((resolve, reject) => {
-    const gen = textGene(10);
-    setInterval(() => {
-      var next = gen.next();
-      if (next.done) {
-        resolve();
-      }
-    }, 100);
-  });
-}
-
-function sleep() {
+//　自作Sleep関数
+function sleep(num) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve();
-    }, 500);
+    }, num);
   });
 }
 
+// Solveメイン処理
 async function solveMaze() {
   await toggleButton();
-  await sleep();
-  await learnAndRenderPath();
-  await sleep();
+  await sleep(500);
+  await learnPath();
+  await RenderPath();
+  await sleep(500);
   await toggleButton();
 }
 
+// 迷路作成
 function createMaze() {
   let maze;
   const ROW = document.getElementById("row-size").value;
@@ -785,5 +863,6 @@ gbtn.addEventListener("click", () => {
 // ボタンクリックを検知して、学習アルゴリズムの実行
 const btn = document.getElementById("btn");
 btn.addEventListener("click", () => {
+  document.getElementById("text").innerHTML = "processing...";
   solveMaze();
 });
