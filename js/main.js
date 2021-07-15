@@ -733,7 +733,9 @@ class Maze {
 function toggleButton() {
   return new Promise((resolve, reject) => {
     const btn = document.getElementById("btn");
+    const gbtn = document.getElementById("gbtn");
     btn.disabled = !btn.disabled;
+    gbtn.disabled = !gbtn.disabled;
     resolve();
   });
 }
